@@ -6,6 +6,7 @@ from google.appengine.ext import ndb
 
 import jinja2
 import webapp2
+import brilliance
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -26,4 +27,5 @@ class MainPage(webapp2.RequestHandler):
 
 application = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/rate', brilliance.Calculator),
 ], debug=True)

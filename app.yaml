@@ -1,4 +1,4 @@
-application: brilliant-circle
+application: brilliantcircle
 version: 1
 runtime: python27
 api_version: 1
@@ -9,12 +9,14 @@ handlers:
 - url: /js
   static_dir: js
 
+- url: /style
+  static_dir: style
+
 - url: /.*
   script: brilliantcircle.application
 
-# TODO: Will probably need to specify versions later
 libraries:
 - name: webapp2
-  version: latest
+  version: "2.5.2"
 - name: jinja2
   version: latest

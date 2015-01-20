@@ -1,3 +1,14 @@
+var PERFECT_CIRCLE_LINE_WIDTH = 10;
+var USER_CIRCLE_LINE_WIDTH = 20;
+var PERFECT_CIRCLE_COLOR = 'rgba(255,255,255,0.4)';
+var USER_CIRCLE_COLOR = 'rgba(227,235,100,0.1)';
+var PERFECT_CIRCLE_RADIUS = 150;
+
+var started = false;
+var lastx = 0;
+var lasty = 0;
+var points = [];
+
 // Bind canvas to listeners
 var canvas = document.getElementById('drawing_board');
 canvas.addEventListener('mousedown', mouseDown, false);
@@ -5,16 +16,47 @@ canvas.addEventListener('mousemove', mouseMove, false);
 canvas.addEventListener('mouseup', mouseUp, false);
 var ctx = canvas.getContext('2d');
 
-ctx.lineWidth = 8;
-ctx.lineJoin = 'round';
-ctx.lineCap = 'round';
+// Create objects
+var canvasSize = new function() {
+  this.x = canvas.width;
+  this.y = canvas.height;
+}
+var centerCoord = new function() {
+  this.x = parseInt(canvasSize.x/2,10),
+  this.y = parseInt(canvasSize.y/2,10)
+}
 
-var started = false;
-var lastx = 0;
-var lasty = 0;
-var points = [];
+/**
+ * The perfect circle background is drawn when document is ready
+ */
+$(document).ready(function() {
+  drawCircle();
+});
 
+/**
+ * Draws the default perfect circle
+ */
+function drawCircle() {
+  ctx.beginPath();
+  ctx.arc(centerCoord.x, centerCoord.y, PERFECT_CIRCLE_RADIUS, 0, 2 * Math.PI);
+  ctx.strokeStyle = PERFECT_CIRCLE_COLOR;
+  ctx.setLineDash([30]);
+  ctx.lineWidth = PERFECT_CIRCLE_LINE_WIDTH;
+  ctx.stroke();
+
+  // reset
+  ctx.setLineDash([0]);
+  ctx.lineWidth = USER_CIRCLE_LINE_WIDTH;
+  ctx.strokeStyle = USER_CIRCLE_COLOR;
+}
+
+/**
+ * Mouse callback functions
+ */
 function mouseDown(e) {
+
+  clear();
+
   var m = getMouse(e, canvas);
   points.push({
     x: m.x,
@@ -25,7 +67,6 @@ function mouseDown(e) {
 
 function mouseMove(e) {
   if (started) {
-    ctx.clearRect(0, 0, 500, 500);
     // put back the saved content
     var m = getMouse(e, canvas);
     points.push({
@@ -39,24 +80,66 @@ function mouseMove(e) {
 function mouseUp(e) {
   if (started) {
     started = false;
+
+    var pointsStr = JSON.stringify(points);
+    var centerCoordStr = JSON.stringify(centerCoord);
+    // When mouse is up, user has finished drawing. At this point we send
+    // a message to the server with all the points of the drawn circle
+    sendMessage('/rate', pointsStr, centerCoordStr);
     points = [];
   }
 };
 
-// Clear both canvases!
-function clear() {
-  context.clearRect(0, 0, 500, 500);
-//  memCtx.clearRect(0, 0, 500, 500);
-
+/**
+ * Sends a request to the server, and handles the response
+ * @param path  Path of the message
+ * @param data  Data of the message
+ */
+function sendMessage(path, pointsStr, coordsStr){
+  $.ajax({
+    url: path,
+    type: 'POST',
+    data: {
+      points: pointsStr,
+      center: coordsStr
+    }
+  }).done(function(data){
+    updateScore(data.sum);
+  });
 };
 
+/**
+ * Updates the score on the page
+ * @param score  The calculated score
+ */
+function updateScore(score) {
+  var result = document.getElementById('result');
+  result.innerHTML = score;
+}
+
+/**
+ * Clears the canvas and redraws the background circle
+ */
+function clear() {
+  ctx.clearRect(0, 0, canvasSize.x, canvasSize.y);
+  drawCircle();
+};
+
+/**
+ * Draws the user's points on the canvas
+ * @param ctx     canvas context
+ * @param points  All the points to be drawn
+ */
 function drawPoints(ctx, points) {
 
   // Draw a basic circle instead
   if (points.length < 6) {
     var b = points[0];
-    ctx.beginPath(), ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0),
-                             ctx.closePath(), ctx.fill();
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, USER_CIRCLE_LINE_WIDTH / 2, 0, Math.PI * 2);
+    ctx.fillStyle = USER_CIRCLE_COLOR;
+    ctx.closePath(),
+    ctx.fill();
     return
   }
 
