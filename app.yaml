@@ -12,6 +12,10 @@ handlers:
 - url: /style
   static_dir: style
 
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
 - url: /.*
   script: brilliantcircle.application
 
