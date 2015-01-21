@@ -1,12 +1,6 @@
 import webapp2
-import logging
 import math
 import json
-import time
-
-from google.appengine.api import channel
-from google.appengine.api import users
-from google.appengine.ext import ndb
 
 # This class calculates the brilliance of a circle. It does that by taking into
 # account three parameters:
@@ -27,6 +21,7 @@ class Calculator(webapp2.RequestHandler):
     DISTANCE_CROSSED_WEIGHT = 0.5
     DISTANCE_TO_CIRCLE_WEIGHT = 100
     QUADRAND_PENALTY_WEIGHT = 30
+
 
     def calculate(self, center, radius, points, canvasSize):
 

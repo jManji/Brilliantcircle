@@ -148,7 +148,7 @@ function drawPoints(ctx, points) {
   }
 
   ctx.beginPath(), ctx.moveTo(points[0].x, points[0].y);
-  // draw a bunch of quadratics, using the average of two points as the control point
+  // Draw a bunch of quadratics, using the average of two points as the control point
   for (i = 1; i < points.length - 2; i++) {
     var c = (points[i].x + points[i + 1].x) / 2,
     d = (points[i].y + points[i + 1].y) / 2;
