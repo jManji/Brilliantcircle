@@ -83,9 +83,11 @@ function mouseUp(e) {
 
     var pointsStr = JSON.stringify(points);
     var centerCoordStr = JSON.stringify(centerCoord);
+    var canvasSizeStr = JSON.stringify(canvasSize);
     // When mouse is up, user has finished drawing. At this point we send
     // a message to the server with all the points of the drawn circle
-    sendMessage('/rate', pointsStr, centerCoordStr);
+    sendMessage('/rate', pointsStr, centerCoordStr,
+                PERFECT_CIRCLE_RADIUS, canvasSizeStr);
     points = [];
   }
 };
@@ -95,16 +97,18 @@ function mouseUp(e) {
  * @param path  Path of the message
  * @param data  Data of the message
  */
-function sendMessage(path, pointsStr, coordsStr){
+function sendMessage(path, pointsStr, coordsStr, radiusStr, canvasSizeStr){
   $.ajax({
     url: path,
     type: 'POST',
     data: {
       points: pointsStr,
-      center: coordsStr
+      center: coordsStr,
+      radius: radiusStr,
+      canvasSize: canvasSizeStr
     }
   }).done(function(data){
-    updateScore(data.sum);
+    updateScore(data.score);
   });
 };
 
@@ -113,7 +117,7 @@ function sendMessage(path, pointsStr, coordsStr){
  * @param score  The calculated score
  */
 function updateScore(score) {
-  var result = document.getElementById('result');
+  var result = document.getElementById('score_value');
   result.innerHTML = score;
 }
 
