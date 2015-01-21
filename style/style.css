@@ -3,3 +3,32 @@
   border-style: solid;
   border-width: 5px;
 }
+
+#score {
+  height: 36px;
+  width: 171px;
+  padding-top: 2px;
+
+  background-color: #F51E50;
+  border-style: solid;
+  border-width: 5px;
+  font-size: 33px;
+}
+
+#score_label, #score_value {
+  opacity: 0.5;
+  font-weight: bold;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  float: left;
+}
+
+#score_label {
+  color: rgb(255,255,255);
+  padding-right:7px;
+}
+
+#score_value {
+  color: rgb(227,235,100);
+  opacity: 0.9;
+}

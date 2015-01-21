@@ -113,7 +113,7 @@ class Calculator(webapp2.RequestHandler):
 
         # By trial and error, we checked the smallest error we can have is around
         # 67. We can calibrate the results further, subtracting it.
-        score -= 66
+        score = abs(score - 66)
 
         message = {
             'score': score
